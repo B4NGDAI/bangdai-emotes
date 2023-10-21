@@ -1,3 +1,4 @@
+**feature**
 - animation
 - walkstyle
 - mood
@@ -6,22 +7,22 @@
 
 - all is configurable
 
-dependency:
+**dependency:**
 - ox_lib
 
-usage:
+**usage:**
 - can use emote from menu or command /e (command) 
 - check config.lua for command
 
-credits:
+**credits:**
 - thx ricx for facial animations
 - https://github.com/zelbeus/ricx_facial_anims
 
 
-soon:
+**soon:**
 - shared emotes
 
-preview:
+**preview:**
 - https://youtu.be/szh-A2uy53Q
 
 - feel free for pull request if you guys have better anim or scenario or whatever
