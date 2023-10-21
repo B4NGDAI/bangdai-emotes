@@ -21,3 +21,8 @@ AddEventHandler("ip_walkanim:setwalk", function(animations)
     local citizenId = Player.PlayerData.citizenid
     MySQL.Async.execute("UPDATE players Set walk = @walk WHERE citizenid = @citizenid", {['walk'] = walk,['citizenid'] = citizenId})
 end)
+
+AddEventHandler('onResourceStart', function(resource)
+	if not GetCurrentResourceName() ~= "bangdai-emotes" then return end
+	StopResource(resource)
+end)
