@@ -134,7 +134,7 @@ end
 
 function GenerateMoodStyleMenu()
     local optionsList = {}
-    for i, v in pairs(fa) do
+    for i, v in pairs(babi) do
         optionsList[#optionsList + 1] = {
             label = GetFacialAnimDictLabel(v.id),
             description = 'Open Category',
@@ -162,7 +162,6 @@ function GenerateMoodStyleMenu()
             TriggerEvent("ip_mood:menu_category", args[1])
         else
             ClearFacialIdleAnimOverride(cache.ped)
-            lib.showMenu('ip_emote_mood', MenuIndexes['ip_emote_mood'])
         end
     end)
     lib.showMenu('ip_emote_mood', MenuIndexes['ip_emote_mood'])
