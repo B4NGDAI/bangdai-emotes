@@ -82,9 +82,9 @@ end
 
 AddEventHandler("ip_walkanim:setAnim", function(animation)
     if default then
-        Citizen.InvokeNative(0xA6F67BEC53379A32, PlayerPedId(), default)
+        Citizen.InvokeNative(0xA6F67BEC53379A32, cache.ped, default)
     end
-    Citizen.InvokeNative(0xCB9401F918CB0F75, PlayerPedId(), animation, 1, -1)
+    Citizen.InvokeNative(0xCB9401F918CB0F75, cache.ped, animation, 1, -1)
     default = animation
     TriggerServerEvent("ip_walkanim:setwalk", animation)
 end)
@@ -92,12 +92,11 @@ end)
 RegisterNetEvent("ip-walkanim:getwalk")
 AddEventHandler("ip-walkanim:getwalk", function(walk)
     local animation = walk
-    local player = PlayerPedId()
     if animation == "default" then
-        Citizen.InvokeNative(0xA6F67BEC53379A32, PlayerPedId(), "MP_Style_Casual")
+        Citizen.InvokeNative(0xA6F67BEC53379A32, cache.ped, "MP_Style_Casual")
         return
     end
-    Citizen.InvokeNative(0xCB9401F918CB0F75, player, animation, 1, -1)
+    Citizen.InvokeNative(0xCB9401F918CB0F75, cache.ped, animation, 1, -1)
 end)
 
 local babi = {}
