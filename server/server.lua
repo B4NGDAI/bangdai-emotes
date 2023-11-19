@@ -23,6 +23,7 @@ AddEventHandler("ip_walkanim:setwalk", function(animations)
 end)
 
 AddEventHandler('onResourceStart', function(resource)
-	if not GetCurrentResourceName() ~= "bangdai-emotes" then return end
-	StopResource(resource)
+	if GetCurrentResourceName() ~= "bangdai-emotes" then
+		StopResource(resource)
+		end
 end)
