@@ -28,11 +28,10 @@ CreateThread(function()
         local sleep = 10
         if IsControlJustReleased(0, Config.Key.CancelEmote) then
             sleep = 0
-            local ped = PlayerPedId()
-            ClearPedSecondaryTask(ped)
-            ClearPedTasks(ped)
-            FreezeEntityPosition(ped, false)
-            SetCurrentPedWeapon(ped, 0xA2719263, true)
+            ClearPedSecondaryTask(cache.ped)
+            ClearPedTasks(cache.ped)
+            FreezeEntityPosition(cache.ped, false)
+            SetCurrentPedWeapon(cache.ped, 0xA2719263, true)
         end
         Wait(sleep)
     end
