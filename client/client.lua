@@ -9,9 +9,6 @@ end
 
 local function AhRuwet(animDict, animname, speed, speedX, duration, flags, allowwalk)
     lib.requestAnimDict(animDict)
-    while not HasAnimDictLoaded(animDict) do
-        Wait(100)
-    end
     TaskPlayAnim(cache.ped, animDict, animname, speed, speedX, duration, flags, 0, allowwalk, 0, false, 0, false)
 end
 
@@ -121,10 +118,7 @@ CreateThread(function()
 end)
 
 local function StartFacialAnim(anim)
-    RequestAnimDict(anim[1])
-    while not HasAnimDictLoaded(anim[1]) do 
-        Wait(1)
-    end
+    lib.requestAnimDict(anim[1])
     SetFacialIdleAnimOverride(cache.ped, anim[2], anim[1])
 end
 
