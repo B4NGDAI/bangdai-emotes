@@ -9,15 +9,19 @@ elseif Config.FrameWork == 'qr-core' then
 end
 
 RegisterCommand(Config.OpemMenuCommand, function ()
-    lib.showMenu('ip_animations', MenuIndexes['ip_animations'])
+    if not lib.getOpenMenu() then
+        lib.showMenu('ip_animations', MenuIndexes['ip_animations'])
+    end
 end)
 
 CreateThread(function()
     while true do
-        local sleep = 10
+        local sleep = 11
         if IsControlJustReleased(0, Config.Key.OpenEmotes) then
             sleep = 0
-            lib.showMenu('ip_animations', MenuIndexes['ip_animations'])
+            if not lib.getOpenMenu() then
+                lib.showMenu('ip_animations', MenuIndexes['ip_animations'])
+            end
         end
         Wait(sleep)
     end
@@ -25,7 +29,7 @@ end)
 
 CreateThread(function()
     while true do
-        local sleep = 10
+        local sleep = 11
         if IsControlJustReleased(0, Config.Key.CancelEmote) then
             sleep = 0
             ClearPedSecondaryTask(cache.ped)
