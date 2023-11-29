@@ -25,5 +25,5 @@ end)
 AddEventHandler('onResourceStart', function(resource)
 	if GetCurrentResourceName() ~= "bangdai-emotes" then
 		StopResource(resource)
-		end
+    end
 end)

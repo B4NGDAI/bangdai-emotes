@@ -1,15 +1,37 @@
-
+local Gabungan = {}
 MenuIndexes = {}
+for i=1, #Config.AnimationEmotes.dance do
+    Gabungan[Config.AnimationEmotes.dance[i].command] = Config.AnimationEmotes.dance[i]
+end
+
+for i=1, #Config.AnimationEmotes.emotes do
+    Gabungan[Config.AnimationEmotes.emotes[i].command] = Config.AnimationEmotes.emotes[i]
+end
+
+for i=1, #Config.AnimationEmotes.scenario do
+    Gabungan[Config.AnimationEmotes.scenario[i].command] = Config.AnimationEmotes.scenario[i]
+end
+
+local em = {}
+for i=1, #Config.EmoteList do
+    em[Config.EmoteList[i].command] = Config.EmoteList[i]
+end
+
+local jalan = {}
+for i=1, #Config.AnimationEmotes.walkstyle do
+    jalan[(Config.AnimationEmotes.walkstyle[i].title):lower()] = Config.AnimationEmotes.walkstyle[i]
+end
+
 local GetHashKey = joaat
 local default = nil
 
-local function PlayEmoteNative(category, emoteType)
-    Citizen.InvokeNative(0xB31A277C1AC7B7FF, cache.ped, category, 2, GetHashKey(emoteType), 0, 0, 0, 0, 0)
+local function pen(data)
+    Citizen.InvokeNative(0xB31A277C1AC7B7FF, cache.ped, data.category, 2, GetHashKey(data.emoteType), 0, 0, 0, 0, 0)
 end
 
-local function AhRuwet(animDict, animname, speed, speedX, duration, flags, allowwalk)
-    lib.requestAnimDict(animDict)
-    TaskPlayAnim(cache.ped, animDict, animname, speed, speedX, duration, flags, 0, allowwalk, 0, false, 0, false)
+local function rwt(data)
+    lib.requestAnimDict(data.animDict)
+    TaskPlayAnim(cache.ped, data.animDict, data.animname, data.speed, data.speedX, data.duration, data.flags, 0, data.allowwalk, 0, false, 0, false)
 end
 
 lib.registerMenu({
@@ -54,7 +76,7 @@ function GenerateWalkstyleMenu()
     for i, v in pairs (Config.AnimationEmotes.walkstyle) do
         optionsList[#optionsList + 1] = {
             label = string.format('%s', v.title),
-            description = '',
+            description = ('/walk %s'):format(v.title == 'Remove Walkstyle' and 'default' or v.title:lower()),
             args = {v.anim}
         }
     end
@@ -162,7 +184,7 @@ end
 
 RegisterNetEvent("ip_mood:menu_category", function(id)
     local optionsList = {}
-    for i, v in pairs(fa[id].items) do
+    for i, v in pairs(babi[id].items) do
         optionsList[#optionsList + 1] = {
             label = Config.VariationLabels[v] or v,
             description = 'Open Category',
@@ -231,7 +253,7 @@ RegisterNetEvent("ip:emotes:client:menuscenario", function()
         optionsList[#optionsList + 1] = {
             label = v.title,
             description = ('/e %s'):format(string.gsub(v.command, "%s", "-")),
-            args = { v.scenario, v.time }
+            args = { i }
         }
     end
     table.sort(optionsList, sortByTitle)
@@ -250,7 +272,8 @@ RegisterNetEvent("ip:emotes:client:menuscenario", function()
     }, function(selected)
         for i, v in pairs(optionsList) do
             if selected == i then
-                TaskStartScenarioInPlace(cache.ped, joaat(v.args[1]), v.args[2], 0, false, false, false)
+                TaskStartScenarioInPlace(cache.ped, GetHashKey(Config.AnimationEmotes.scenario[v.args[1]].scenario), Config.AnimationEmotes.scenario[v.args[1]].time, 0, false, false, false)
+                lib.showMenu('scenario', MenuIndexes['scenario'])
                 break
             end
         end
@@ -264,7 +287,7 @@ RegisterNetEvent("ip:emotes:client:menushowdance", function()
         optionsList[#optionsList + 1] = {
             label = v.title,
             description = ('/e %s'):format(string.gsub(v.command, "%s", "-")),
-            args = { v.animDict, v.animname, v.speed, v.speedX, v.duration, v.flags, v.allowwalk}
+            args = {i}
         }
     end
     table.sort(optionsList, sortByTitle)
@@ -283,7 +306,8 @@ RegisterNetEvent("ip:emotes:client:menushowdance", function()
     },function (selected)
         for i, v in pairs(optionsList) do
             if selected == i then
-                AhRuwet(v.args[1], v.args[2], v.args[3], v.args[4], v.args[5], v.args[6], v.args[7])
+                rwt(Config.AnimationEmotes.dance[v.args[1]])
+                lib.showMenu('ip_emote_dance', MenuIndexes['ip_emote_dance'])
                 break
             end
         end
@@ -297,7 +321,7 @@ RegisterNetEvent("ip:emotes:client:menushowemote", function()
         optionsList[#optionsList + 1] = {
             label = v.title,
             description = ('/e %s'):format(string.gsub(v.command, "%s", "-")),
-            args = { v.animDict, v.animname, v.speed, v.speedX, v.duration, v.flags, v.allowwalk }
+            args = {i}
         }
     end
     table.sort(optionsList, sortByTitle)
@@ -316,7 +340,8 @@ RegisterNetEvent("ip:emotes:client:menushowemote", function()
     }, function(selected)
         for i, v in pairs(optionsList) do
             if selected == i then
-                AhRuwet(v.args[1], v.args[2], v.args[3], v.args[4], v.args[5], v.args[6], v.args[7])
+                rwt(Config.AnimationEmotes.emotes[v.args[1]])
+                lib.showMenu('ip_emote_1', MenuIndexes['ip_emote_1'])
                 break
             end
         end
@@ -331,7 +356,7 @@ RegisterNetEvent("ip:emotes:client:menushowkitemote1", function()
         optionsList[#optionsList + 1] = {
             label = v.title,
             description = ('/e %s'):format(string.gsub(v.command, "%s", "-")),
-            args = {v.category, v.emoteType}
+            args = {i}
         }
     end
     
@@ -351,7 +376,8 @@ RegisterNetEvent("ip:emotes:client:menushowkitemote1", function()
     }, function (selected)
         for i, v in pairs(optionsList) do
             if selected == i then
-                PlayEmoteNative(v.args[1], v.args[2])
+                pen(Config.EmoteList[v.args[1]])
+                lib.showMenu('ip_emote_kit1', MenuIndexes['ip_emote_kit1'])
                 break
             end
         end
@@ -359,37 +385,61 @@ RegisterNetEvent("ip:emotes:client:menushowkitemote1", function()
     lib.showMenu('ip_emote_kit1', MenuIndexes['ip_emote_kit1'])
 end)
 
+
+
 RegisterCommand('e', function(source, args)
     if not args[1] then
-        print('Usage: /e [emote_command]')
+        lib.notify({
+            type = 'error',
+            title = 'Usage: /e [emote_command]'
+        })
         return
     end
 
     local emoteCommand = args[1]
 
-    for category, emotes in pairs(Config.EmoteList) do
-        for _, emoteData in ipairs(emotes) do
-            if emoteData.command == emoteCommand then
-                PlayEmoteNative(emoteData.category, emoteData.emoteType)
-                return
-            end
+    if Gabungan[emoteCommand] then
+        if Gabungan[emoteCommand].scenario then
+            TaskStartScenarioInPlace(cache.ped, GetHashKey(Gabungan[emoteCommand].scenario), Gabungan[emoteCommand].time, 0, false, false, false)
+            return
+        else
+            rwt(Gabungan[emoteCommand])
+            return
+        end
+    else
+        if em[emoteCommand] then
+            pen(em[emoteCommand])
+            return
+        else
+            lib.notify({
+                type = 'error',
+                title = 'No emotes found for '..args[1]
+            })
+            return
         end
     end
+end)
 
-    for category, emotes in pairs(Config.AnimationEmotes) do
-        for _, emoteData in ipairs(emotes) do
-            if emoteData.command == emoteCommand then
-                if emoteData.scenario then
-                    local ped = cache.ped
-                    local scenarioHash = GetHashKey(emoteData.scenario)
-                    TaskStartScenarioInPlace(ped, scenarioHash, emoteData.time, 0, false, false, false)
-                    return
-                else
-                    AhRuwet(emoteData.animDict, emoteData.animname, emoteData.speed, emoteData.speedX, emoteData.duration, emoteData.flags)
-                    return
-                end
-            end
+RegisterCommand('walk', function (source, args, raw)
+    if not args[1] then
+        lib.notify({
+            type = 'error',
+            title = 'Usage: /walk [walkstyle_command]'
+        })
+        return
+    end
+    if args[1] == 'default' then
+        TriggerEvent("ip_walkanim:setAnim", args[1])
+    else
+        if jalan[args[1]] then
+            TriggerEvent("ip_walkanim:setAnim", args[1])
+            return
+        else
+            lib.notify({
+                type = 'error',
+                title = 'No walking styles found for '..args[1]
+            })
+            return
         end
     end
-
 end)
