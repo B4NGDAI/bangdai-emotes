@@ -34,6 +34,10 @@ local function rwt(data)
     TaskPlayAnim(cache.ped, data.animDict, data.animname, data.speed, data.speedX, data.duration, data.flags, 0, data.allowwalk, 0, false, 0, false)
 end
 
+local function sortByTitle(a, b)
+    return a.label < b.label
+end
+
 lib.registerMenu({
     id = 'ip_animations',
     title = 'Emote Menu',
@@ -45,13 +49,55 @@ lib.registerMenu({
         MenuIndexes['ip_animations'] = selected
     end,
     options = {
-        {label = "Emote", description = "", icon = 'fas fa-icons', args = {'ip_emote'}},
-        {label = "scenario", description = "", icon = 'fas fa-icons', args = {'ip_scenario'}},
-        {label = "Mood", description = "", icon = 'fas fa-smile', args = {'ip_emote_mood'}},
-        {label = "Walkstyle", description = "", icon = 'fas fa-walking', args = {'ip_emote_walkstyle'}},
+        {label = 'Search', description = 'Searching for something emotes?', icon = 'fas fa-magnifying-glass', args = {'cari'}},
+        {label = "Emote", description = "List of Dance, Emotes and Task Emotes", icon = 'fas fa-icons', args = {'ip_emote'}},
+        {label = "Scenario", description = "List of Scenarios", icon = 'fas fa-icons', args = {'ip_scenario'}},
+        {label = "Mood", description = "List of Moods", icon = 'fas fa-smile', args = {'ip_emote_mood'}},
+        {label = "Walkstyle", description = "List of Walkstyles", icon = 'fas fa-walking', args = {'ip_emote_walkstyle'}},
     }
 }, function(_, _, args)
-    if args[1] == 'ip_emote_walkstyle' then
+    if args[1] == 'cari' then
+        CloseMenu(true)
+        local input = lib.inputDialog('Search Emotes', {
+            { type = 'input', label = 'Name of Emotes' },
+        })
+        if input then
+            local dpt = {}
+            local counts = 0
+            for a,b in pairs(Gabungan) do
+                if string.find((a):lower(), input[1]) then
+                    counts +=1
+                    dpt[counts] = {label = b.title, description = '/e '..b.command, args = {b.command}}
+                end
+            end
+            if #dpt < 1 then
+                lib.notify({
+                    title = 'No emotes found for '..input[1],
+                    description = 'but you can try another one!',
+                    type = 'error'
+                })
+                return
+            else
+                table.sort(dpt, sortByTitle)
+                lib.registerMenu({
+                    id = 'pencarian',
+                    title = 'Search Results for '..input[1],
+                    position = 'top-right',
+                    onClose = function(keyPressed)
+                        CloseMenu(false, keyPressed, 'ip_animations')
+                    end,
+                    onSelected = function(selected)
+                        MenuIndexes['pencarian'] = selected
+                    end,
+                    options = dpt,
+                }, function (selected, scrollIndex, args, checked)
+                    ExecuteCommand('e '..args[1])
+                    lib.showMenu('pencarian', MenuIndexes['pencarian'] or 1)
+                end)
+                lib.showMenu('pencarian', MenuIndexes['pencarian'] or 1)
+            end
+        end
+    elseif args[1] == 'ip_emote_walkstyle' then
         GenerateWalkstyleMenu()
     elseif args[1] == 'ip_emote_mood' then
         GenerateMoodStyleMenu()
@@ -67,7 +113,6 @@ function CloseMenu(isFullMenuClose, keyPressed, previousMenu)
         lib.hideMenu(false)
         return
     end
-
     lib.showMenu(previousMenu, MenuIndexes[previousMenu])
 end
 
@@ -215,10 +260,6 @@ RegisterNetEvent("ip_mood:menu_category", function(id)
     lib.showMenu('ip_emote_mood2', MenuIndexes['ip_emote_mood2'])
 end)
 
-local function sortByTitle(a, b)
-    return a.label < b.label
-end
-
 function GenerateEmoteMenu()
     lib.registerMenu({
         id = 'ip_emotes',
@@ -231,9 +272,9 @@ function GenerateEmoteMenu()
             MenuIndexes['ip_emotes'] = selected
         end,
         options = {
-            {label = 'Dance Emotes'},
-            {label = 'Emotes'},
-            {label = 'Task Emotes'},
+            {label = 'Dance Emotes', description = 'List of Dance Emotes'},
+            {label = 'Emotes', description = 'List of Emotes'},
+            {label = 'Task Emotes', description = 'List of Task Emotes'},
         }
     }, function(selected)
         if selected == 1 then
