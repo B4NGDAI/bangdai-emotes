@@ -22,7 +22,7 @@ for i=1, #Config.AnimationEmotes.walkstyle do
     jalan[(Config.AnimationEmotes.walkstyle[i].title):lower()] = Config.AnimationEmotes.walkstyle[i]
 end
 
-local GetHashKey = joaat
+local GetHashKey = GetHashKey
 local default = nil
 
 local function pen(data)
